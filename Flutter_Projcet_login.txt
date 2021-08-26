@@ -1,0 +1,145 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: public_member_api_docs
+
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_button/constants.dart';
+import 'package:sign_button/create_button.dart';
+
+Future<UserCredential> signInWithGoogle() async {
+  // Trigger the authentication flow
+  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+  // Obtain the auth details from the request
+  final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+  // Create a new credential
+  final credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth.accessToken,
+    idToken: googleAuth.idToken,
+);
+
+  // Once signed in, return the UserCredential
+  return await FirebaseAuth.instance.signInWithCredential(credential);
+}
+
+
+Future<UserCredential> signInWithFacebook() async {
+  // Trigger the sign-in flow
+  final LoginResult loginResult = await FacebookAuth.instance.login();
+
+  // Create a credential from the access token
+  final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+  // Once signed in, return the UserCredential
+  return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+}
+
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+
+
+class MyApp extends StatelessWidget {
+
+  MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Heal Me',
+      debugShowCheckedModeBanner: false,
+      home: SignInHealMe(),
+    );
+  }
+}
+
+
+class SignInHealMe extends StatefulWidget {
+
+
+  const SignInHealMe({Key? key}) : super(key: key);
+
+  @override
+  _SignInHealMeState createState() => _SignInHealMeState();
+}
+
+class _SignInHealMeState extends State<SignInHealMe> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(0.0, 220.0, 0.0, 30.0),
+                  child: Text('Login',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 45,
+                      color: Colors.teal[100],
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        SignInButton(
+                            buttonType: ButtonType.google,
+                            buttonSize: ButtonSize.large,
+                            onPressed: signInWithGoogle
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 15.0),
+                        ),
+                        SignInButton(
+                            buttonType: ButtonType.facebook,
+                            buttonSize: ButtonSize.large,
+                            onPressed:signInWithFacebook,
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 15.0),
+                        ),
+                        SignInButton(
+                          buttonType: ButtonType.apple,
+                          buttonSize: ButtonSize.large,
+                          onPressed: () {
+                            print('Hi');
+                          },
+                        ),
+                      ]
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+}
+
+
+
+
+
+
+
+
+
