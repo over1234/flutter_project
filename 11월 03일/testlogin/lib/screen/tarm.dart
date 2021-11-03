@@ -1,0 +1,680 @@
+import 'package:transition/transition.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'game_sub_screen.dart';
+import 'package:flutter_countdown_timer/index.dart';
+
+// ignore: camel_case_types
+class term extends StatelessWidget {
+  const term({Key? key}) : super(key: key);
+
+  static const String _title = 'Flutter Code Sample';
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: _title,
+      home: TermPage(),
+    );
+  }
+}
+
+int max = 0; // 투표받은 값의 최대값
+
+int index = 0; // 최대값의 인덱스
+
+bool pressed = false; //버튼들 모두 안눌렀다고 선언
+
+bool pressed1 = false;
+
+bool pressed2 = false;
+
+bool pressed3 = false;
+
+bool pressed4 = false;
+
+bool pressed5 = false;
+
+bool pressed6 = false;
+
+bool dpressed = false;
+
+bool dpressed1 = false;
+
+bool dpressed2 = false;
+
+bool dpressed3 = false;
+
+bool dpressed4 = false;
+
+bool dpressed5 = false;
+
+bool dpressed6 = false;
+
+/// This
+
+/// is the stateless widget that the main application instantiates.
+
+class TermPage extends StatefulWidget {
+  const TermPage({Key? key}) : super(key: key);
+
+  @override
+  _TermPageState createState() => _TermPageState();
+}
+
+class _TermPageState extends State<TermPage> {
+  final fb = FirebaseFirestore.instance;
+  final name = "User";
+  int _counter = 0; // 버튼 누른 횟수
+
+  int _counter1 = 0;
+
+  int _counter2 = 0;
+
+  int _counter3 = 0;
+
+  int _counter4 = 0;
+
+  int _counter5 = 0;
+
+  int _counter6 = 0;
+  int end = 5;
+
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30; //타이머 30초
+
+  //버튼 클릭 해제하면 횟수 내려감
+  void _incrementCountdown() {
+    setState(() {
+      _counter--;
+    });
+  }
+
+  void _incrementCountdown1() {
+    setState(() {
+      _counter1--;
+    });
+  }
+
+  void _incrementCountdown2() {
+    setState(() {
+      _counter2--;
+    });
+  }
+
+  void _incrementCountdown3() {
+    setState(() {
+      _counter3--;
+    });
+  }
+
+  void _incrementCountdown4() {
+    setState(() {
+      _counter4--;
+    });
+  }
+
+  void _incrementCountdown5() {
+    setState(() {
+      _counter5--;
+    });
+  }
+
+  void _incrementCountdown6() {
+    setState(() {
+      _counter6--;
+    });
+  }
+
+  //버튼 클릭하면 횟수가 증가됨
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  void _incrementCounter1() {
+    setState(() {
+      _counter1++;
+    });
+  }
+
+  void _incrementCounter2() {
+    setState(() {
+      _counter2++;
+    });
+  }
+
+  void _incrementCounter3() {
+    setState(() {
+      _counter3++;
+    });
+  }
+
+  void _incrementCounter4() {
+    setState(() {
+      _counter4++;
+    });
+  }
+
+  void _incrementCounter5() {
+    setState(() {
+      _counter5++;
+    });
+  }
+
+  void _incrementCounter6() {
+    setState(() {
+      _counter6++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0.0,
+            title: const Text('기간 투표',
+                style: TextStyle(
+                    color: Color(0xff55CED6),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold)),
+            centerTitle: true,
+            backgroundColor: Colors.white,
+          ),
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 2.0,
+                  width: 500,
+                  color: const Color(0xff55CED6),
+                ),
+
+                const SizedBox(
+                  height: 15,
+                ),
+
+                const Text(
+                  '제한시간',
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xff55CED6),
+                      fontWeight: FontWeight.bold),
+                ),
+                //타이머
+                CountdownTimer(
+                  endTime: endTime,
+                  onEnd: () {
+                    //만약 30초 타이머가 끝날시에 아래에 있는 함수를 불러옴
+                    Navigator.push(
+                      context,
+                      Transition(
+                          child: SubPage(),
+                          transitionEffect: TransitionEffect.LEFT_TO_RIGHT),
+                    );
+                    UpdateTime();
+                  },
+                  widgetBuilder: (_, CurrentRemainingTime? time) {
+                    if (time == null) {
+                      return const Text(
+                        '제한시간이 끝났습니다',
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      );
+                    }
+                    return Text(
+                      '${time.sec}',
+                      style: const TextStyle(fontSize: 45, color: Colors.black),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 30),
+
+                //제한시간ㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴ
+
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // 모든 버튼들은 삼항연산자를 이용해 한 버튼을 클릭하면 다른버튼은 클릭할수없게 NULL처리를 해줬고,
+                      // 버튼을 눌렀다 안눌렀다를 확인하기 위하여 pressed를 넣어줬고 다른 버튼 NULL 처리는 dpressed로 판단하게 했다
+                      OutlinedButton(
+                          onPressed: dpressed
+                              ? null
+                              : () {
+                                  if (pressed) {
+                                    pressed = false;
+                                    _incrementCountdown();
+                                    dpressed1 = false;
+                                    dpressed2 = false;
+                                    dpressed3 = false;
+                                    dpressed4 = false;
+                                    dpressed5 = false;
+                                    dpressed6 = false;
+                                  } else {
+                                    pressed = true;
+                                    _incrementCounter();
+                                    dpressed1 = true;
+                                    dpressed2 = true;
+                                    dpressed3 = true;
+                                    dpressed4 = true;
+                                    dpressed5 = true;
+                                    dpressed6 = true;
+                                  }
+                                },
+                          child: const Text(
+                            '1일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 10,
+                ),
+//1111111111111111111111111111111111111111111111111111111111111111111111111111111
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButton(
+                          onPressed: dpressed1
+                              ? null
+                              : () {
+                                  if (pressed1) {
+                                    pressed1 = false;
+                                    _incrementCountdown1();
+                                    dpressed = false;
+                                    dpressed2 = false;
+                                    dpressed3 = false;
+                                    dpressed4 = false;
+                                    dpressed5 = false;
+                                    dpressed6 = false;
+                                  } else {
+                                    pressed1 = true;
+                                    _incrementCounter1();
+                                    dpressed = true;
+                                    dpressed2 = true;
+                                    dpressed3 = true;
+                                    dpressed4 = true;
+                                    dpressed5 = true;
+                                    dpressed6 = true;
+                                  }
+                                },
+                          child: const Text(
+                            '2일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed1
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter1',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                //222222222222222222222222222222222222222222222222222222222222222
+
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButton(
+                          onPressed: dpressed2
+                              ? null
+                              : () {
+                                  if (pressed2) {
+                                    pressed2 = false;
+                                    _incrementCountdown2();
+                                    dpressed = false;
+                                    dpressed1 = false;
+                                    dpressed3 = false;
+                                    dpressed4 = false;
+                                    dpressed5 = false;
+                                    dpressed6 = false;
+                                  } else {
+                                    pressed2 = true;
+                                    _incrementCounter2();
+                                    dpressed1 = true;
+                                    dpressed = true;
+                                    dpressed3 = true;
+                                    dpressed4 = true;
+                                    dpressed5 = true;
+                                    dpressed6 = true;
+                                  }
+                                },
+                          child: const Text(
+                            '3일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed2
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter2',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                //333333333333333333333333333333333333333333333333333333333333333333333
+
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButton(
+                          onPressed: dpressed3
+                              ? null
+                              : () {
+                                  if (pressed3) {
+                                    pressed3 = false;
+                                    _incrementCountdown3();
+                                    dpressed = false;
+                                    dpressed1 = false;
+                                    dpressed2 = false;
+                                    dpressed4 = false;
+                                    dpressed5 = false;
+                                    dpressed6 = false;
+                                  } else {
+                                    pressed3 = true;
+
+                                    _incrementCounter3();
+                                    dpressed1 = true;
+                                    dpressed2 = true;
+                                    dpressed = true;
+                                    dpressed4 = true;
+                                    dpressed5 = true;
+                                    dpressed6 = true;
+                                  }
+                                },
+                          child: const Text(
+                            '4일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed3
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter3',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                //444444444444444444444444444444444444444444444444444444444444444444444
+
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButton(
+                          onPressed: dpressed4
+                              ? null
+                              : () {
+                                  if (pressed4) {
+                                    pressed4 = false;
+                                    _incrementCountdown4();
+                                    dpressed = false;
+                                    dpressed1 = false;
+                                    dpressed2 = false;
+                                    dpressed3 = false;
+                                    dpressed5 = false;
+                                    dpressed6 = false;
+                                  } else {
+                                    pressed4 = true;
+
+                                    _incrementCounter4();
+                                    dpressed1 = true;
+                                    dpressed2 = true;
+                                    dpressed3 = true;
+                                    dpressed = true;
+                                    dpressed5 = true;
+                                    dpressed6 = true;
+                                  }
+                                },
+                          child: const Text(
+                            '5일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed4
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter4',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 15,
+                ),
+                //5555555555555555555555555555555555555555555555555555555555555555555
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButton(
+                          onPressed: dpressed5
+                              ? null
+                              : () {
+                                  if (pressed5) {
+                                    pressed5 = false;
+                                    _incrementCountdown5();
+                                    dpressed = false;
+                                    dpressed1 = false;
+                                    dpressed2 = false;
+                                    dpressed3 = false;
+                                    dpressed4 = false;
+                                    dpressed6 = false;
+                                  } else {
+                                    pressed5 = true;
+
+                                    _incrementCounter5();
+                                    dpressed1 = true;
+                                    dpressed2 = true;
+                                    dpressed3 = true;
+                                    dpressed4 = true;
+                                    dpressed = true;
+                                    dpressed6 = true;
+                                  }
+                                },
+                          child: const Text(
+                            '6일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed5
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter5',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 15,
+                ),
+                //666666666666666666666666666666666666666666666666666666666666666666
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButton(
+                          onPressed: dpressed6
+                              ? null
+                              : () {
+                                  if (pressed6) {
+                                    pressed6 = false;
+                                    _incrementCountdown6();
+                                    dpressed = false;
+                                    dpressed1 = false;
+                                    dpressed2 = false;
+                                    dpressed3 = false;
+                                    dpressed4 = false;
+                                    dpressed5 = false;
+                                  } else {
+                                    pressed6 = true;
+
+                                    _incrementCounter6();
+                                    dpressed1 = true;
+                                    dpressed2 = true;
+                                    dpressed3 = true;
+                                    dpressed4 = true;
+                                    dpressed5 = true;
+                                    dpressed = true;
+                                  }
+                                },
+                          child: const Text(
+                            '7일',
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Color(0xff444D6A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: pressed6
+                                ? const Color(0xff55CED6)
+                                : const Color(0xffDCF7F9),
+                            minimumSize: const Size(290, 50),
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '$_counter6',
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ]),
+
+                const SizedBox(
+                  height: 15,
+                ),
+                //7777777777777777777777777777777777777777777777777777777777777777777
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ignore: non_constant_identifier_names
+  Future<void> UpdateTime() async {
+    //최대값 구하기 코드
+    Firebase.initializeApp();
+    var a = [
+      _counter,
+      _counter1,
+      _counter2,
+      _counter3,
+      _counter4,
+      _counter5,
+      _counter6
+    ];
+    var time = ['1일', '2일', '3일', '4일', '5일', '6일', '7일'];
+    //최대값
+    for (int i = 0; i < 7; i++) {
+      if (max < a[i]) {
+        max = a[i];
+        index = i;
+      }
+    }
+    // ignore: avoid_print
+    print(time[index]);
+
+    fb.collection(name).add({'현재 선택된 기간은 : ': time[index]});
+  }
+}
