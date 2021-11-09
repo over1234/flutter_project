@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "221764626675",
+    "project_id": "healmeproject-c4727",
+    "storage_bucket": "healmeproject-c4727.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221764626675:android:b69d7d03e1eb35e8a0af86",
+        "android_client_info": {
+          "package_name": "com.healme.wisehealthylife"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221764626675-sngo1a777lgb8t9cfc1nsrv97splket8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healme.wisehealthylife",
+            "certificate_hash": "61:0F:16:4E:ED:ED:97:27:2F:BD:09:D8:A6:CD:D9:43:F3:0A:F4:3B"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZV8x4DKubwUQzNfrsAOLrs9rk_piqDR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221764626675-sngo1a777lgb8t9cfc1nsrv97splket8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
