@@ -1,0 +1,524 @@
+import 'dart:math';
+
+import 'package:wisehealthylife/screen/tarm.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter/rendering.dart';
+
+import 'package:flutter_countdown_timer/index.dart';
+
+import 'package:transition/transition.dart';
+
+bool pressed = false;
+
+bool pressed1 = false;
+
+bool pressed2 = false;
+
+bool pressed3 = false;
+
+bool pressed4 = false;
+
+bool dpressed1 = false;
+
+bool dpressed2 = false;
+
+bool dpressed3 = false;
+
+bool dpressed4 = false;
+
+bool dpressed5 = false;
+
+/// This
+
+/// is the stateless widget that the main application instantiates.
+
+class VotePage extends StatefulWidget {
+  final String roomID;
+  const VotePage({Key? key, required this.roomID}) : super(key: key);
+
+  @override
+  _VotePageState createState() => _VotePageState(roomID: this.roomID);
+}
+
+class _VotePageState extends State<VotePage> {
+  final String roomID;
+  _VotePageState({required this.roomID});
+  final fb = FirebaseFirestore.instance;
+  final name = "User";
+  int _counter = 0;
+
+  int _counter1 = 0;
+
+  int _counter2 = 0;
+
+  int _counter3 = 0;
+
+  int _counter4 = 0;
+
+  int max = 0; // 최대값
+
+  int index = 0; //최대값을 담은 인덱스
+
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30; //타이머 30초
+
+  //감소하는 카운터
+  void _incrementCountdown() {
+    setState(() {
+      _counter--;
+    });
+  }
+
+  void _incrementCountdown1() {
+    setState(() {
+      _counter1--;
+    });
+  }
+
+  void _incrementCountdown2() {
+    setState(() {
+      _counter2--;
+    });
+  }
+
+  void _incrementCountdown3() {
+    setState(() {
+      _counter3--;
+    });
+  }
+
+  void _incrementCoundown4() {
+    setState(() {
+      _counter4--;
+    });
+  }
+
+  //증가하는 카운터
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  void _incrementCounter1() {
+    setState(() {
+      _counter1++;
+    });
+  }
+
+  void _incrementCounter2() {
+    setState(() {
+      _counter2++;
+    });
+  }
+
+  void _incrementCounter3() {
+    setState(() {
+      _counter3++;
+    });
+  }
+
+  void _incrementCounter4() {
+    setState(() {
+      _counter4++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return WillPopScope(
+            onWillPop: () async {
+              return Future(() => false);
+            },
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                elevation: 0.0,
+                title: const Text('미션 투표',
+                    style: TextStyle(
+                        color: Color(0xff55CED6),
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold)),
+                centerTitle: true,
+                backgroundColor: Colors.white,
+              ),
+              body: Center(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: 2.0,
+                      width: 500,
+                      color: const Color(0xff55CED6),
+                    ),
+
+                    const SizedBox(
+                      height: 15,
+                    ),
+
+                    const Text(
+                      '제한시간',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xff55CED6),
+                          fontWeight: FontWeight.bold),
+                    ),
+
+                    CountdownTimer(
+                      endTime: endTime,
+                      onEnd: () {
+                        pressed = false;
+                        pressed1 = false;
+                        pressed2 = false;
+                        pressed3 = false;
+                        pressed4 = false;
+                        dpressed1 = false;
+                        dpressed2 = false;
+                        dpressed3 = false;
+                        dpressed4 = false;
+                        dpressed5 = false;
+                        //시간 끝나면 아래 함수를 실행하고 기간투표로 넘어감
+                        UpdateDoc();
+                        Navigator.push(
+                          context,
+                          Transition(
+                              child: TermPage(roomID: roomID),
+                              transitionEffect: TransitionEffect.LEFT_TO_RIGHT),
+                        );
+                      },
+                      widgetBuilder: (_, CurrentRemainingTime? time) {
+                        if (time == null) {
+                          return const Text(
+                            '제한시간이 끝났습니다',
+                            style: TextStyle(fontSize: 20, color: Colors.black),
+                          );
+                        }
+                        return Text(
+                          '${time.sec}',
+                          style: const TextStyle(
+                              fontSize: 45, color: Colors.black),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(
+                      height: 120,
+                    ),
+
+                    //제한시간ㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴ
+
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          // 모든 버튼들은 삼항연산자를 이용해 한 버튼을 클릭하면 다른버튼은 클릭할수없게 NULL처리를 해줬고,
+                          // 버튼을 눌렀다 안눌렀다를 확인하기 위하여 pressed를 넣어줬고 다른 버튼 NULL 처리는 dpressed로 판단하게 했다
+                          OutlinedButton(
+                              onPressed: dpressed1
+                                  ? null
+                                  : () {
+                                      if (pressed) {
+                                        pressed = false;
+                                        _incrementCountdown();
+                                        dpressed2 = false;
+                                        dpressed3 = false;
+                                        dpressed4 = false;
+                                        dpressed5 = false;
+                                      } else {
+                                        pressed = true;
+                                        _incrementCounter();
+                                        dpressed2 = true;
+                                        dpressed3 = true;
+                                        dpressed4 = true;
+                                        dpressed5 = true;
+                                      }
+                                    },
+                              child: const Text(
+                                '핸드폰 사용하지 않기',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff444D6A),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: pressed
+                                    ? const Color(0xff55CED6)
+                                    : const Color(0xffDCF7F9),
+                                minimumSize: const Size(290, 50),
+                                side: const BorderSide(color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '$_counter',
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ]),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    //11111111111111111111111111111111111111
+
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          OutlinedButton(
+                              onPressed: dpressed2
+                                  ? null
+                                  : () {
+                                      if (pressed1) {
+                                        pressed1 = false;
+                                        dpressed1 = false;
+                                        dpressed3 = false;
+                                        dpressed4 = false;
+                                        dpressed5 = false;
+                                        _incrementCountdown1();
+                                      } else {
+                                        pressed1 = true;
+                                        dpressed1 = true;
+                                        dpressed3 = true;
+                                        dpressed4 = true;
+                                        dpressed5 = true;
+
+                                        _incrementCounter1();
+                                      }
+                                    },
+                              child: const Text(
+                                '걷기',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff444D6A),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: pressed1
+                                    ? const Color(0xff55CED6)
+                                    : const Color(0xffDCF7F9),
+                                minimumSize: const Size(290, 50),
+                                side: const BorderSide(color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '$_counter1',
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ]),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    //2222222222222222222222222222222222222222222222
+
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          OutlinedButton(
+                              onPressed: dpressed3
+                                  ? null
+                                  : () {
+                                      if (pressed2) {
+                                        pressed2 = false;
+                                        dpressed1 = false;
+                                        dpressed2 = false;
+                                        dpressed4 = false;
+                                        dpressed5 = false;
+
+                                        _incrementCountdown2();
+                                      } else {
+                                        pressed2 = true;
+                                        dpressed1 = true;
+                                        dpressed2 = true;
+                                        dpressed4 = true;
+                                        dpressed5 = true;
+
+                                        _incrementCounter2();
+                                      }
+                                    },
+                              child: const Text(
+                                '어두운 곳에서 휴대폰 사용하지 않기',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff444D6A),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: pressed2
+                                    ? const Color(0xff55CED6)
+                                    : const Color(0xffDCF7F9),
+                                minimumSize: const Size(290, 50),
+                                side: const BorderSide(color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '$_counter2',
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ]),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    //33333333333333333333333333333333333333333333333333
+
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          OutlinedButton(
+                              onPressed: dpressed4
+                                  ? null
+                                  : () {
+                                      if (pressed3) {
+                                        pressed3 = false;
+                                        dpressed1 = false;
+                                        dpressed2 = false;
+                                        dpressed3 = false;
+                                        dpressed5 = false;
+
+                                        _incrementCountdown3();
+                                      } else {
+                                        pressed3 = true;
+                                        dpressed1 = true;
+                                        dpressed2 = true;
+                                        dpressed3 = true;
+                                        dpressed5 = true;
+
+                                        _incrementCounter3();
+                                      }
+                                    },
+                              child: const Text(
+                                '러닝',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff444D6A),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: pressed3
+                                    ? const Color(0xff55CED6)
+                                    : const Color(0xffDCF7F9),
+                                minimumSize: const Size(290, 50),
+                                side: const BorderSide(color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '$_counter3',
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ]),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    //444444444444444444444444444444444444444444444
+
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          OutlinedButton(
+                              onPressed: dpressed5
+                                  ? null
+                                  : () {
+                                      if (pressed4) {
+                                        pressed4 = false;
+                                        dpressed1 = false;
+                                        dpressed2 = false;
+                                        dpressed3 = false;
+                                        dpressed4 = false;
+
+                                        _incrementCoundown4();
+                                      } else {
+                                        pressed4 = true;
+                                        dpressed1 = true;
+                                        dpressed2 = true;
+                                        dpressed3 = true;
+                                        dpressed4 = true;
+
+                                        _incrementCounter4();
+                                      }
+                                    },
+                              child: const Text(
+                                '감사와 관련된 말 3개쓰기',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff444D6A),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: pressed4
+                                    ? const Color(0xff55CED6)
+                                    : const Color(0xffDCF7F9),
+                                minimumSize: const Size(290, 50),
+                                side: const BorderSide(color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '$_counter4',
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ]),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    //555555555555555555555555555555555555
+                  ],
+                ),
+              ),
+            ));
+      },
+    );
+  }
+
+  // ignore: non_constant_identifier_names
+  Future<void> UpdateDoc() async {
+    Firebase.initializeApp();
+    // ignore: unused_local_variable, unnecessary_new
+    final random = new Random();
+    var a = [_counter, _counter1, _counter2, _counter3, _counter4];
+    var mission = [
+      '핸드폰 사용하지않기',
+      '걷기',
+      '어두운 곳에서 휴대폰 사용하지않기',
+      '러닝',
+      '감사와 관련된 말 3개쓰기'
+    ];
+    //최대값 구하기 코드
+    //서로 대응하게 같은 인덱스에 값을 넣어주고 최대값 구한 인덱스를 index변수에 넣어주면서 mission[index]를 불러와 최대 투표를 받은 미션을 데이터베이스에 올려준다.
+    for (int i = 0; i < 5; i++) {
+      if (a[i] == 1) index = i;
+    }
+    // ignore: avoid_print
+
+    FirebaseFirestore.instance
+        .collection("PrivateRoom")
+        .doc(roomID)
+        .update({"Misson": "${mission[index]}"});
+  }
+}
